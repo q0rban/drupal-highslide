@@ -1,0 +1,455 @@
+.highslide-wrapper div {
+  font-size: 10pt;
+}
+
+.highslide-container img.highslide-image {
+  cursor: url(graphics/restore.png), arrow;
+}
+
+a.highslide-credits,
+a.highslide-credits i {
+  padding: 2px;
+  color: silver;
+  text-decoration: none;
+  font-size: 10px;
+}
+
+a.highslide-credits:hover,
+a.highslide-credits:hover i {
+  color: white;
+  background-color: gray;
+}
+
+/* HTML */
+
+.highslide-html {
+  background-color: white;
+}
+
+.highslide-html-blur {
+  
+}
+
+.highslide-html-content {
+  display: none;
+  font-size: 12px;
+}
+
+.highslide-body p {
+  margin-bottom: 8px;
+  font-family: HelveticaNeue, "Helvetica Neue", Helvetica, Arial, Geneva, sans-serif;
+  padding-right: 8px;
+}
+
+.highslide-body p.black {
+  color: black;
+}
+
+.highslide-body ul li {
+  font-family: HelveticaNeue, "Helvetica Neue", Helvetica, Arial, Geneva, sans-serif;
+}
+
+.highslide-html-content h3 {
+  background: url(graphics/titlebar-background.gif) repeat-y right;
+  border-top: 1px dotted #7c969f;
+  border-bottom: 1px dotted #7c969f;
+  padding-top: 7px;
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+  color: black;
+  line-height: 18px;
+  font-size: 16px;
+  clear: none;
+}
+
+/* Styles for the popup */
+
+.highslide-wrapper .highslide-html-content {
+  padding: 25px;
+  height: auto;
+  width: 400px;
+}
+
+.highslide-wrapper .highslide-header div {
+  margin: 0;
+  padding: 0;
+}
+
+.highslide-wrapper .highslide-header ul {
+  text-align: right;
+  margin: 0;
+  padding: 0;
+}
+
+.highslide-wrapper .highslide-header ul li {
+  display: inline;
+  padding-left: 9px;
+}
+
+.highslide-wrapper .highslide-header ul li.highslide-previous, .highslide-wrapper .highslide-header ul li.highslide-next {
+  display: none;
+}
+
+.highslide-wrapper .highslide-header a {
+  color: #355f82;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: normal;
+  font-style: normal;
+}
+
+.highslide-wrapper .highslide-header a:hover {
+  color: black;
+}
+
+.highslide-wrapper .highslide-header .highslide-move a {
+  cursor: move;
+}
+
+.highslide-wrapper .highslide-footer {
+  height: 11px;
+}
+
+.highslide-wrapper .highslide-footer .highslide-resize {
+  float: right;
+  height: 11px;
+  width: 11px;
+  background: url(graphics/resize.gif);
+}
+
+.highslide-wrapper .highslide-body {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.highslide-move {
+  cursor: move;
+}
+
+.highslide-resize {
+  cursor: nw-resize;
+}
+
+.highslide-wrapper a.close img {
+  width: 30px;
+  height: 30px;
+  text-indent: -9999px;
+  display: block;
+  z-index: 5;
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  background-repeat: no-repeat;
+}
+
+.highslide-overlay a.close img {
+  width: 30px;
+  height: 30px;
+  text-indent: -9999px;
+  display: block;
+  z-index: 5;
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  background-repeat: no-repeat;
+}
+
+.highslide-overlay ul.slidenav {
+  background-color: transparent;
+  bottom: -50px;
+  right: 18px;
+  display: block;
+  position: absolute;
+  width: 150px;
+}
+
+.highslide-overlay ul.slidenav li {
+  list-style-type: none;
+  float: right;
+}
+
+.highslide-overlay a.previous {
+  text-indent: -9999px;
+  width: 29px;
+  height: 29px;
+  background: url(graphics/arrow-left.png) no-repeat;
+  display: block;
+}
+
+.highslide-overlay a.previous:hover {
+  background-position: -29px;
+}
+
+.highslide-overlay a.next {
+  text-indent: -9999px;
+  width: 29px;
+  height: 29px;
+  background: url(graphics/arrow-right.png) no-repeat;
+  display: block;
+}
+
+.highslide-overlay a.next:hover {
+  background-position: -29px;
+}
+
+.highslide-dimming {
+  background: #1a2f36;
+  position: absolute;
+}
+
+.highslide-overlay {
+  display: none;
+}
+
+.closebutton {
+  text-indent: -9999px;
+  position: relative;
+  top: -15px;
+  left: -15px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  background: url(graphics/close.png);
+/* NOTE! For IE6, you also need to update the highslide-ie6.css file. */
+}
+
+/* Extras */
+
+.highslide-body form dl dt {
+  color: black;
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.highslide-body form label {
+  color: black;
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.highslide-body form input.text {
+  height: 16px;
+  padding: 3px;
+  background-color: #f2f5f6;
+  border: 3px solid #a5b8be;
+  width: 220px;
+  margin-bottom: 6px;
+  color: #a5b8be;
+  font: 12px "HelveticaNeue-Light", Helvetica, Arial, sans-serif;
+}
+
+.highslide-body form input.btn {
+  padding: 8px;
+  background-color: #355f6d;
+  color: white;
+  margin-top: 6px;
+  width: 232px;
+  font: 12px "HelveticaNeue-Light", Helvetica, Arial, sans-serif;
+}
+
+.highslide-body form a {
+  text-decoration: none;
+  color: #355f6d;
+  border-bottom: 1px dotted #355f6d;
+}
+
+.highslide-body form a:hover {
+  text-decoration: none;
+  color: black;
+  border-bottom: 1px solid black;
+}
+
+.highslide {
+  cursor: url(graphics/magnifier.png), pointer;
+  outline: none;
+  font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
+}
+
+.highslide-active-anchor img {
+  opacity: 0.4;
+}
+
+.highslide img {
+  
+}
+
+.highslide:hover img {
+  
+}
+
+.highslide-wrapper {
+  background: white;
+}
+
+.highslide-image {
+  
+}
+
+.highslide-image-blur {
+  opacity: 0.6;
+}
+
+.highslide-caption {
+  display: none;
+  border-top: 1px solid white;
+  background-repeat: repeat-x;
+  padding: 15px 20px;
+}
+
+.highslide-caption .folio_description {
+  margin-bottom: 5px;
+}
+
+.highslide-caption h4 {
+  font-size: 16px;
+  line-height: 14px;
+  color: #355f6d;
+  margin: 0 0 4px;
+  padding: 0 62px 0 0;
+}
+
+.highslide-caption h3 {
+  color: #355f6d;
+  margin: 0 0 4px;
+  padding: 0 62px 0 0;
+  font: 14px/14px "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+}
+
+.highslide-caption div {
+  display: block;
+  float: left;
+}
+
+.highslide-caption p {
+  color: #a1a1a1;
+  padding-bottom: 12px;
+  line-height: 16px;
+  font-size: 12px;
+}
+
+.highslide-caption ul {
+  float: left;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.highslide-caption ul li {
+  font: 12px "Helvetica Neue", HelveticalNeue, Helvetica, Arial, sans-serif;
+  list-style-type: none;
+  float: left;
+  padding-right: 8px;
+  margin-right: 8px;
+  border-right: 1px solid #d7d7d7;
+  color: #686f76;
+}
+
+.highslide-caption ul li:last-child {
+  border-right-style: none;
+  border-right-width: 0;
+}
+
+.highslide-caption ul li.title {
+  border-right-style: none;
+  border-right-width: 0;
+  color: #1c343c;
+  font-family: "Helvetica Neue", HelveticalNeue, Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  background: url(graphics/caption-arrow.png) no-repeat right 3px;
+}
+
+.highslide-caption ul li strong {
+  color: #1c343c;
+  font-weight: normal;
+  font-style: normal;
+}
+
+.highslide-caption a.pfolio-link {
+  color: #355f6d;
+  text-decoration: none;
+  border-bottom: 1px dotted #355f6d;
+}
+
+.highslide-caption a.pfolio-link:hover {
+  color: #192e35;
+  border-bottom: 1px solid #192e35;
+  text-decoration: none;
+}
+
+.highslide-caption a.previous {
+  text-indent: -9999px;
+  width: 29px;
+  height: 29px;
+  background: url(graphics/arrow-left.png) no-repeat;
+  display: block;
+  float: left;
+}
+
+.highslide-caption a.previous:hover {
+  background-position: -29px;
+}
+
+.highslide-caption a.next {
+  text-indent: -9999px;
+  width: 29px;
+  height: 29px;
+  background: url(graphics/arrow-right.png) no-repeat;
+  display: block;
+  float: left;
+}
+
+.highslide-caption a.next:hover {
+  background-position: -29px;
+}
+
+.highslide-caption div.hs-nav {
+  float: right;
+  margin: 0 0 0 20px;
+  padding: 0;
+}
+
+.highslide-loading {  
+  background: url(graphics/highslide-loader-bg.png) no-repeat center;
+  display: block;
+  width: 40px; 
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 1 !important;
+}
+
+.highslide-loading img {
+  margin: 6px 4px;
+}
+
+a.highslide-credits,
+a.highslide-credits i {
+  padding: 2px;
+  color: silver;
+  text-decoration: none;
+  font-size: 10px;
+}
+
+a.highslide-credits:hover,
+a.highslide-credits:hover i {
+  color: white;
+  background-color: gray;
+}
+
+a.highslide-full-expand {
+  background: url(graphics/highslide/fullexpand.gif) no-repeat;
+  display: none;
+  margin: 0 10px 10px 0;
+  width: 34px;
+  height: 34px;
+}
+
+/* These must always be last */
+
+.highslide-display-block {
+  display: block;
+}
+
+.highslide-display-none {
+  display: none;
+}

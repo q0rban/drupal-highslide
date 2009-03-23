@@ -1,0 +1,6 @@
+; $Id$
+name = "Highslide"
+description = "Module for enabling Highslide JS, an open source JavaScript software for zooming thumbnails and HTML."
+package = Javascript tools
+core = 6.x
+dependencies[] = imagecache

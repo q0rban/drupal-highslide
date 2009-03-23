@@ -1,0 +1,15 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Installation functions for Highslide.
+ */
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function highslide_uninstall() {
+  // Delete the variable we created.
+  variable_del('highslide_settings');
+}
