@@ -161,8 +161,12 @@ function highslide_formatter_form($form_state, $op = 'add', $formatter = array()
     drupal_set_message(t('The specified formatter was not found.'), 'error');
     drupal_goto('admin/settings/highslide/formatters');
   }
+
   $form = array();
-  $form['name'] = array(
+
+  $form['highslide_formatter'] = array('#tree' => TRUE);
+
+  $form['highslide_formatter']['name'] = array(
     '#type' => 'textfield',
     '#size' => '64',
     '#title' => t('Formatter Name'),
@@ -170,7 +174,7 @@ function highslide_formatter_form($form_state, $op = 'add', $formatter = array()
     '#description' => t('Please only use lowercase alphanumeric characters, and underscores (_) for names.'),
     '#required' => TRUE,
   );
-  $form['label'] = array(
+  $form['highslide_formatter']['label'] = array(
     '#type' => 'textfield',
     '#size' => '64',
     '#title' => t('Label'),
@@ -179,14 +183,14 @@ function highslide_formatter_form($form_state, $op = 'add', $formatter = array()
     '#required' => TRUE,
   );
 
-  $form['thumb'] = array(
+  $form['highslide_formatter']['thumb'] = array(
     '#title' => t('Thumb preset'),
     '#type' => 'select',
     '#default_value' => $formatter['thumb'],
     '#options' => _highslide_imagecache_presets(),
     '#required' => TRUE,
   );
-  $form['full'] = array(
+  $form['highslide_formatter']['full'] = array(
     '#title' => t('Full preset'),
     '#type' => 'select',
     '#default_value' => $formatter['full'],
@@ -194,22 +198,23 @@ function highslide_formatter_form($form_state, $op = 'add', $formatter = array()
     '#required' => TRUE,
   );
 
-  $form['captions'] = array(
+  $form['highslide_formatter']['captions'] = array(
     '#title' => t('Captions'),
     '#description' => t('The caption is taken from the image description.  Check where you would like the caption to display.'),
     '#type' => 'fieldset',
     '#collapsible' => FALSE,
   );
-  $form['captions']['caption'] = array(
+  $form['highslide_formatter']['captions']['caption'] = array(
     '#title' => t('Display'),
-    '#type' => 'checkboxes',
-    '#default_value' => isset($formatter['caption']) ? $formatter['caption'] : array('full'),
+    '#type' => 'select',
+    '#default_value' => isset($formatter['caption']) ? $formatter['caption'] : 'full',
     '#options' => array(
       'thumb' => t('Thumb'),
       'full' => t('Full'),
+      'both' => t('Both'),
     ),
   );
-  $form['captions']['caption_field'] = array(
+  $form['highslide_formatter']['captions']['caption_field'] = array(
     '#title' => t('Content field'),
     '#description' => t('Specify which CCK text field you would like to use as the contents for the caption.  The description on the image field is used by default.'),
     '#type' => 'select',
@@ -220,61 +225,9 @@ function highslide_formatter_form($form_state, $op = 'add', $formatter = array()
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => ($op == 'edit') ? t('Update Formatter') : t('Create New Formatter'),
-  );/*
-
-  // Display a preview image for this action. Put it below the submit button so
-  // users don't have to do a bunch of scrolling.
-  $preview_path = file_create_path('imagecache_sample.png');
-  if (!file_exists($preview_path)) {
-    // Copy of the image into the files directory so rather than generating it
-    // from the original so we don't end up creating subdirectories mirroring
-    // the path to the this module.
-    $preview_path = drupal_get_path('module', 'imagecache_ui') .'/sample.png';
-    file_copy($preview_path, 'imagecache_sample.png');
-  }
-  imagecache_image_flush($preview_path);
-  $imagecache_path = imagecache_create_url($preset['presetname'], $preview_path) .'?'. time();
-  $form['preview'] = array(
-    '#type' => 'item',
-    '#title' => t('Preview'),
-    '#value' => l($imagecache_path, $imagecache_path) .'<br />'. l("<img src='$imagecache_path' />", $imagecache_path, array('html' => true)),
   );
-
-  return $form;*/
 
   return $form;
-}
-
-function highslide_formatter_form_submit($form, &$form_state) {
-  $values = $form_state['values'];
-  $caption = array_keys(array_filter($values['caption']));
-  $formatters = highslide_formatters();
-
-  $formatters[$values['name']] = array(
-    'name' => $values['name'],
-    'label' => $values['label'],
-    'full' => $values['full'],
-    'thumb' => $values['thumb'],
-    'caption' => $caption,
-    'caption_field' => $values['caption_field'],
-  );
-
-  variable_set('highslide_formatters', $formatters);
-
-  // Clear caches    
-  if (module_exists('content')) {
-    content_clear_type_cache();
-  }
-  drupal_rebuild_theme_registry();
-
-  if ($values['op'] = t('Update Formatter')) {
-    drupal_set_message(t('Highslide formatter %name was updated.', array('%name' => $values['label'])));
-  }
-  else {
-    drupal_set_message(t('Highslide formatter %name was created.', array('%name' => $values['label'])));
-  }
-
-  $form_state['redirect'] = 'admin/settings/highslide/formatters';
 }
 
 function highslide_formatter_form_validate($form, &$form_state) {
@@ -294,6 +247,32 @@ function highslide_formatter_form_validate($form, &$form_state) {
   if (!preg_match('/^[a-z0-9_.]+$/', $values['name'])) {
     form_set_error('name', t('Please only use lowercase alphanumeric characters and underscores (_) for names.'));
   }
+}
+
+function highslide_formatter_form_submit($form, &$form_state) {
+  $values = $form_state['values'];
+
+  $formatter = $values['highslide_formatter'];
+  $formatters = highslide_formatters();
+
+  $formatters[$formatter['name']] = $formatter;
+
+  variable_set('highslide_formatters', $formatters);
+
+  // Clear caches    
+  if (module_exists('content')) {
+    content_clear_type_cache();
+  }
+  drupal_rebuild_theme_registry();
+
+  if ($values['op'] = t('Update Formatter')) {
+    drupal_set_message(t('Highslide formatter %name was updated.', array('%name' => $values['label'])));
+  }
+  else {
+    drupal_set_message(t('Highslide formatter %name was created.', array('%name' => $values['label'])));
+  }
+
+  $form_state['redirect'] = 'admin/settings/highslide/formatters';
 }
 
 function highslide_formatter_delete_form($form_state, $formatter = array()) {
@@ -325,6 +304,7 @@ function highslide_formatter_delete_form_submit($form, &$form_state) {
 
   $form_state['redirect'] = 'admin/settings/highslide/formatters';
 }
+
 /**
  *
  */

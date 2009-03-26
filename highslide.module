@@ -263,19 +263,29 @@ function theme_highslide_formatter($element) {
  * Implementation of hook_field_formatter().
  */
 function highslide_field_formatter($field, $item, $formatter, $node = NULL) {
+  // Use default image
   if (empty($item['fid']) && $field['use_default_image']) {
     $item = $field['default_image'];
   }
-  // Views does not load the file for us, while CCK display fields does.
+
+  // Views does not load the file for us, while CCK display fields do.
   if (empty($item['filepath'])) {
     $item = array_merge($item, field_file_load($item['fid']));
   }
+
+  // Unserialize the data if need be.
   if (is_string($item['data'])) {
     $item['data'] = unserialize($item['data']);
   }
 
+  // Load in the formatter
   $formatter = highslide_formatter_by_name(substr($formatter, 3));
+  // If no formatter, quit
+  if (!$formatter) {
+    return '<!-- highslide formatter not found -->';
+  }
 
+  // Set the title, alt and attributes
   $alt = empty($item['data']['alt']) ? '' : $item['data']['alt'];
   $title = empty($item['data']['title']) ? '' : $item['data']['title'];
   $attrib = array('class' => 'highslide_formatter_'. $formatter['name']);
@@ -290,16 +300,18 @@ function highslide_field_formatter($field, $item, $formatter, $node = NULL) {
   else {
     $caption_content = $item['data']['description'];
   }
-  $caption = highslide_caption_array($caption_content, $formatter['caption']);
 
-  if ($formatter) {
-    $item['filepath'] = $item['fid'] == 'upload' ? $item['preview'] : $item['filepath'];
-    $full = imagecache_create_url($formatter['full'], $item['filepath']);
-    $thumb = theme('imagecache', $formatter['thumb'], $item['filepath'], $alt, $title);
-    
-    return theme('highslide', $thumb, $full, NULL, NULL, $caption, $attrib);
-  }
-  return '<!-- highslide formatter '. $formatter['name'] .' not found! -->';
+  // Create the caption array
+  $caption = array('content' => $caption_content, 'display' => $formatter['caption']);
+
+  // Set the filepath
+  $item['filepath'] = ($item['fid'] == 'upload') ? $item['preview'] : $item['filepath'];
+
+  // Create our image tags
+  $full = imagecache_create_url($formatter['full'], $item['filepath']);
+  $thumb = theme('imagecache', $formatter['thumb'], $item['filepath'], $alt, $title);
+
+  return theme('highslide', $thumb, $full, NULL, NULL, $caption, $attrib);
 }
 
 /**
@@ -391,24 +403,37 @@ function theme_highslide_inline_wrap($content = '', $id) {
 }
 
 /**
+ * theme_highslide_caption function.
  *
+ * @param array $caption. (default: array()
+ * @return void
  */
 function theme_highslide_caption($caption = array()) {
   $output = '';
   $content = $caption['content'];
+  $display = $caption['display'];
+
   if (!empty($content)) {
-    if ($caption['thumb']) {
+    if ($display == 'thumb' || $display == 'both') {
       $output = "<div class='highslide-visible-caption'>$content</div>\n";
     }
-    if ($caption['full']) {
+    if ($display == 'full' || $display == 'both') {
       $output .= "<div class='highslide-caption'>$content</div>\n";
     }
   }
+
   return $output;
 }
 
 /**
+ * _highslide_thumbnail function.
  *
+ * @access private
+ * @param mixed $thumb
+ * @param mixed $alt
+ * @param mixed $title
+ * @param mixed $attributes
+ * @return void
  */
 function _highslide_thumbnail($thumb, $alt, $title, $attributes) {
   // If the path already has an imagecache preset, use theme_image() instead of theme_imagecache().
@@ -416,7 +441,11 @@ function _highslide_thumbnail($thumb, $alt, $title, $attributes) {
 }
 
 /**
+ * _highslide_count_image_id function.
  * 
+ * @access private
+ * @param mixed $matches
+ * @return void
  */
 function _highslide_count_image_id($matches) {
   static $image_id;
@@ -426,20 +455,6 @@ function _highslide_count_image_id($matches) {
   $image_id++;
   $max_width = variable_get('highslide_width', 549);
   return '<a href="#nolink" onclick="return false;" id="image'. $image_id .'" class="highslide-no-link"><img'. $matches[1] .' src="' .  $matches[2] .'" class="resizeimage" onload="resize_image(this, \''. $matches[2] .'\', '. $image_id .', '.  $max_width .');'. $matches[3] .' /></a>';
-}
-
-/**
- *
- */
-function highslide_caption_array($content = '', $options = array()) {
-  $caption = array();
-  $options = array_flip($options);
-
-  $caption['full'] = isset($options['full']);
-  $caption['thumb'] = isset($options['thumb']);
-  $caption['content'] = $content;
-  
-  return $caption;
 }
 
 /**
@@ -471,7 +486,7 @@ function highslide_formatters() {
       'label' => t('Highslide Default'),
       'full' => 'highslide_full',
       'thumb' => 'highslide_thumb',
-      'caption' => array(0 => 'full'),
+      'caption' => 'full',
       'caption_field' => 'default',
     ),
   ));
@@ -505,7 +520,7 @@ function highslide_imagecache_default_presets() {
     'presetname' => 'highslide_full',
     'actions' => 
     array (
-      0 => 
+      0 =>
       array (
         'weight' => '0',
         'module' => 'imagecache',

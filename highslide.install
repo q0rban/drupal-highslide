@@ -12,4 +12,30 @@
 function highslide_uninstall() {
   // Delete the variable we created.
   variable_del('highslide_settings');
+  variable_del('highslide_options');
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function highslide_update_6100() {
+  $formatters = variable_get('highslide_formatters', NULL);
+
+  if (is_array($formatters)) {
+    foreach ($formatters as $name => $formatter) {
+      $caption = '';
+      if (is_array($formatter['caption'])) {
+        if (in_array('thumb', $formatter['caption'])) {
+          $caption = 'thumb';
+        }
+        if (in_array('full', $formatter['caption'])) {
+          $caption = ($caption == 'thumb') ? 'both' : 'full';
+        }
+        $formatter['caption'] = $caption;
+      }
+      $formatters[$name] = $formatter;
+    }
+
+    variable_set('highslide_formatters', $formatters);
+  }
 }
