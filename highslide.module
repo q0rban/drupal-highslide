@@ -291,18 +291,21 @@ function highslide_field_formatter($field, $item, $formatter, $node = NULL) {
   $attrib = array('class' => 'highslide_formatter_'. $formatter['name']);
 
   // Get the content for the caption
-  if (isset($formatter['caption_field']) && $formatter['caption_field'] != 'default') {
-    if (!is_object($node)) {
-      $node = node_load($item['nid']);
+  $caption = array();
+  if ($formatter['caption'] != 'none') {
+    if (isset($formatter['caption_field']) && $formatter['caption_field'] != 'default') {
+      if (!is_object($node)) {
+        $node = node_load($item['nid']);
+      }
+      $caption_content = _highslide_caption_content($node, $formatter['caption_field']);
     }
-    $caption_content = _highslide_caption_content($node, $formatter['caption_field']);
+    else {
+      $caption_content = $item['data']['description'];
+    }
+  
+    // Create the caption array
+    $caption = array('content' => $caption_content, 'display' => $formatter['caption']);
   }
-  else {
-    $caption_content = $item['data']['description'];
-  }
-
-  // Create the caption array
-  $caption = array('content' => $caption_content, 'display' => $formatter['caption']);
 
   // Set the filepath
   $item['filepath'] = ($item['fid'] == 'upload') ? $item['preview'] : $item['filepath'];

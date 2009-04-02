@@ -166,6 +166,13 @@ function highslide_formatter_form($form_state, $op = 'add', $formatter = array()
 
   $form['highslide_formatter'] = array('#tree' => TRUE);
 
+  if ($op == 'edit') {
+    $form['old_name'] = array(
+      '#type' => 'value',
+      '#value' => $formatter['name'],
+    );
+  }
+
   $form['highslide_formatter']['name'] = array(
     '#type' => 'textfield',
     '#size' => '64',
@@ -198,24 +205,21 @@ function highslide_formatter_form($form_state, $op = 'add', $formatter = array()
     '#required' => TRUE,
   );
 
-  $form['highslide_formatter']['captions'] = array(
-    '#title' => t('Captions'),
-    '#description' => t('The caption is taken from the image description.  Check where you would like the caption to display.'),
-    '#type' => 'fieldset',
-    '#collapsible' => FALSE,
-  );
-  $form['highslide_formatter']['captions']['caption'] = array(
-    '#title' => t('Display'),
+
+  $form['highslide_formatter']['caption'] = array(
+    '#title' => t('Caption'),
     '#type' => 'select',
     '#default_value' => isset($formatter['caption']) ? $formatter['caption'] : 'full',
     '#options' => array(
-      'thumb' => t('Thumb'),
-      'full' => t('Full'),
+      'thumb' => t('Thumb view'),
+      'full' => t('Full view'),
       'both' => t('Both'),
+      'none' => t('Do not display'),
     ),
+    '#description' => t('Select where you would like the caption to display.'),
   );
-  $form['highslide_formatter']['captions']['caption_field'] = array(
-    '#title' => t('Content field'),
+  $form['highslide_formatter']['caption_field'] = array(
+    '#title' => t('Caption contents'),
     '#description' => t('Specify which CCK text field you would like to use as the contents for the caption.  The description on the image field is used by default.'),
     '#type' => 'select',
     '#default_value' => isset($formatter['caption_field']) ? $formatter['caption_field'] : array('default'),
@@ -231,12 +235,14 @@ function highslide_formatter_form($form_state, $op = 'add', $formatter = array()
 }
 
 function highslide_formatter_form_validate($form, &$form_state) {
-  print_r($form_state);
   $values = $form_state['values'];
+
+  $name = $values['highslide_formatter']['name'];
+
   // Check for duplicates
   if ($values['op'] != t('Update Formatter')) {
     foreach(highslide_formatters() as $formatter) {    
-      if (in_array($values['name'], $formatter)) {
+      if (in_array($name, $formatter)) {
         form_set_error('name', t('The name you have chosen is already in use.'));
         break;
       }
@@ -244,7 +250,7 @@ function highslide_formatter_form_validate($form, &$form_state) {
   }
 
   // Check for illegal characters in preset names
-  if (!preg_match('/^[a-z0-9_.]+$/', $values['name'])) {
+  if (!preg_match('/^[a-z0-9_.]+$/', $name)) {
     form_set_error('name', t('Please only use lowercase alphanumeric characters and underscores (_) for names.'));
   }
 }
@@ -254,6 +260,11 @@ function highslide_formatter_form_submit($form, &$form_state) {
 
   $formatter = $values['highslide_formatter'];
   $formatters = highslide_formatters();
+
+  // Unset the formatter 
+  if ($values['old_name']) {
+    unset($formatters[$values['old_name']]);
+  }
 
   $formatters[$formatter['name']] = $formatter;
 
