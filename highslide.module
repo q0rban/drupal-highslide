@@ -299,12 +299,14 @@ function highslide_field_formatter($field, $item, $formatter, $node = NULL) {
       }
       $caption_content = _highslide_caption_content($node, $formatter['caption_field']);
     }
-    else {
+    else if (isset($item['data']['description'])) {
       $caption_content = $item['data']['description'];
     }
-  
+
+    if ($caption_content) {
     // Create the caption array
-    $caption = array('content' => $caption_content, 'display' => $formatter['caption']);
+      $caption = array('content' => $caption_content, 'display' => $formatter['caption']);
+    }
   }
 
   // Set the filepath
