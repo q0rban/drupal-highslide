@@ -44,11 +44,17 @@ function highslide_menu() {
     'page arguments' => array('highslide_options_form'),
     'access arguments' => array('administer highslide'),
   );
-
   $items['admin/settings/highslide/settings'] = array(
     'title' => 'Settings',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
+  );
+
+  $items['user/login/highslide'] = array(
+    'title' => 'Login',
+    'page callback' => 'highslide_login',
+    'access callback' => 'user_is_anonymous',
+    'options' => array('attributes' => array('class' => 'highslide-ajax-link')),
   );
 
   if (module_exists('imagefield') && module_exists('imagecache')) {
@@ -98,6 +104,18 @@ function highslide_menu() {
 }
 
 /**
+ * Menu callback for highslide login ajax.
+ */
+function highslide_login() {
+  if (user_access('view_highslides')) {
+    print drupal_get_form('user_login_block');
+  }
+  else {
+    drupal_goto('user/login');
+  }
+}
+
+/**
  * Menu wildcard loader
  */
 function highslide_formatter_load($name) {
@@ -135,10 +153,6 @@ function highslide_theme() {
         'content' => NULL,
         'id' => NULL,
       ),
-    ),  
-    'highslide_login' => array(
-      'template' => 'highslide_login',
-      'arguments' => array('user_access' => NULL),
     ),
     'highslide_caption' => array(
       'arguments' => array('caption' => array()),
@@ -173,59 +187,6 @@ function highslide_footer($main = 0) {
     $content = '<div id="closebutton" class="highslide-overlay closebutton" onclick="return hs.close(this)" title="Close"></div>';
   }
   return $content;
-}
-
-/**
- * Implementation of hook_block()
- */
-function highslide_block($op = 'list', $delta = 0, $edit = array()) {
-  global $user;
-
-  switch($op) {
-    case 'list':
-      $blocks[0]['info'] = t('Highslide Login');
-      return $blocks;
-    
-    case 'view':
-      if (!$user->uid && !(arg(0) == 'user' && !is_numeric(arg(1)))) {
-        $blocks['subject'] = t('User login');
-        $blocks['content'] = _highslide_block_content();
-      }
-      return $blocks;
-  }
-}
-
-/**
- * Generate the contents of the HS Block.
- * @return Formatted string.
- */
-function _highslide_block_content() {
-  $options = array();
-  $login_form = '';
-  $user_access = user_access('view highslides');
-
-  return theme('highslide_login', $user_access);
-}
-
-function highslide_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
-  /*
-  if (user_access('view highslides')) {
-    switch ($op) {
-      case 'view': {
-        drupal_add_css($path . '/highslide.css');
-        drupal_add_js($path . '/highslide/highslide-with-html.packed.js');
-        drupal_add_js($path . '/highslide_drupal.js');
-        $node->content['header']['#value'] = '<div id="highslide-controlbar" class="highslide-overlay highslide-controlbar">
-          <a href="javascript:void(0)" class="previous" onclick="return hs.previous(this)" title="Zur&uuml;ck (linke Pfeiltaste)"></a>
-          <a href="javascript:void(0)" class="next" onclick="return hs.next(this)" title="Weiter (rechte Pfeiltaste)"></a>
-          <a href="javascript:void(0)" class="highslide-move" title="Maus gedr&uuml;ckt halten, um Bild zu bewegen"></a>
-          <a href="javascript:void(0)" class="close" onclick="hs.close(this)" title="Schliessen"></a>
-          </div>' . $node->content['header']['#value'];
-        $node->content['body']['#value'] = preg_replace_callback('/<img(.*)src=["|\']+([^"\' ]*)([^>]*)>/i', '_highslide_count_image_id', $node->content['body']['#value']);
-        break;
-      }
-    }
-  }*/
 }
 
 /**
