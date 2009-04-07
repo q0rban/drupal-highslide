@@ -107,7 +107,7 @@ function highslide_menu() {
  * Menu callback for highslide login ajax.
  */
 function highslide_login() {
-  if (user_access('view_highslides')) {
+  if (user_access('view highslides')) {
     print drupal_get_form('user_login_block');
   }
   else {
