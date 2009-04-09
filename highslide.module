@@ -54,7 +54,7 @@ function highslide_menu() {
     'title' => 'Login',
     'page callback' => 'highslide_login',
     'access callback' => 'user_is_anonymous',
-    'options' => array('attributes' => array('class' => 'highslide-ajax-link')),
+    'options' => array('attributes' => array('class' => 'highslide-ajax-link'), 'fragment' => 'highslide-user-login-form'),
   );
 
   if (module_exists('imagefield') && module_exists('imagecache')) {
@@ -108,7 +108,7 @@ function highslide_menu() {
  */
 function highslide_login() {
   if (user_access('view highslides')) {
-    print drupal_get_form('user_login_block');
+    return '<div id="highslide-user-login-form">'. drupal_get_form('user_login_block') .'</div>';
   }
   else {
     drupal_goto('user/login');
