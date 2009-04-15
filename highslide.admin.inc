@@ -14,7 +14,11 @@ function highslide_options_form() {
   $options = variable_get('highslide_options', highslide_default_options());
   $form = array();
 
-  $form['highslide_options']['#tree'] = TRUE;
+  $form['highslide_options'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Highslide options'),
+    '#tree' => TRUE,
+  );
 /*
   $form['highslide_options']['hideOnContentClick'] = array(
     '#type'           => 'checkbox',
@@ -34,6 +38,7 @@ function highslide_options_form() {
     '#type'           => 'textfield',
     '#title'          => t('Highslide Graphics Directory'),
     '#default_value'  => $options['graphicsDir'],
+    '#description'    => t('Highslide likes leading and trailing slashes.'),
   );
   $form['highslide_options']['dimmingOpacity'] = array(
     '#type'           => 'textfield',
@@ -109,6 +114,18 @@ function highslide_options_form() {
       'rounded-black' => t('Rounded Black'),
     ),
     '#description' => t('The graphic outline to display around the expanded content.  <a href="@href" target="_blank">Click here</a> for more details.', array('@href' => 'http://highslide.com/ref/hs.outlineType')),
+  );
+
+  $form['highslide_login'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Login settings'),
+  );
+  $form['highslide_login']['highslide_login_dest'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Login destination'),
+    '#description' => t('The path the user should be redirected to after logging in using the highslide login link.  Do not include leading or trailing slashes.'),
+    '#default_value' => variable_get('highslide_login_dest', 'user'),
+    '#field_prefix' => url(NULL, array('absolute' => TRUE)) . (variable_get('clean_url', 0) ? '' : '?q='),
   );
 
   $form = system_settings_form($form);
