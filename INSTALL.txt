@@ -1,0 +1,13 @@
+To install this module: 
+
+* Copy highslide module to sites/all/modules/highslide
+* Navigate to http://github.com/q0rban/drupal-highslide-js and download the 
+  package.
+* Copy the highslide-full.min.js from that package into the
+  sites/all/modules/highslide/highslide directory.
+* Navigate to admin/build/modules and enable the highslide module.
+* Navigate to admin/user/permissions to set up highslide permissions.
+
+You can also go directly to http://highlside.com and download the JS file from 
+there, however the JS file located at github has been minified and tested to
+work with highslide.module and Drupal 6.x.

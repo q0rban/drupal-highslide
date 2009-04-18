@@ -17,10 +17,61 @@ function highslide_help($path, $arg) {
   switch ($path) {
     case 'admin/modules#description':
       return t('Enables Highslide for Drupal');
-    case 'admin/help#highslide':
-      // @todo Write help text for this module.
-      return t('You are helpless.');
   }
+}
+
+/**
+ * Implementation of hook_enable().
+ */
+function highslide_enable() {
+  if (!_highslide_js_path()) {
+    $path = drupal_get_path('module', 'highslide') .'/highslide';
+    drupal_set_message(t('You must download the highslide JS and copy it to !path.', array('!path' => $path)), 'warning');
+  }
+}
+
+/**
+ * Implementation of hook_requirements().
+ */
+function highslide_requirements($phase) {
+  $requirements = array();
+
+  // Check to see if Highslide JS is installed.
+  if ($phase == 'runtime') {
+    $path = _highslide_js_path();
+    $severity = $path ? REQUIREMENT_OK : REQUIREMENT_ERROR;
+
+    $requirements['highslide_js'] = array(
+      'title' => t('Highslide JS'),
+      'value' => $path ? $path : t('Not found'),
+      'severity' => $severity,
+    );
+
+    if ($severity != REQUIREMENT_OK) {
+      $requirements['highslide_js']['description'] = t('The Highslide JS file was not found.  Please review the INSTALL.txt file included with the Highslide module for installation instructions.');
+    }
+  }
+
+  return $requirements;
+}
+
+/**
+ * Helper function to get the path for the Highslide JS file.
+ *
+ * @return
+ *  the path to the file, or FALSE if no file is found.
+ */
+function _highslide_js_path() {
+  $path = drupal_get_path('module', 'highslide') .'/highslide';
+  // An array of possible highslide files, in order of preference.
+  $files = array('highslide-full.min.js', 'highslide-full.js', 'highslide-full.packed.js');
+
+  foreach($files as $file) {
+    if (file_exists("$path/$file")) {
+      return "$path/$file";
+    }
+  }
+  return FALSE;
 }
 
 /**
@@ -297,14 +348,19 @@ function highslide_field_formatter($field, $item, $formatter, $node = NULL) {
  * Adds the css and js files and settings.
  */
 function highslide_add_files() {
-  // Add the css and js
-  $path = drupal_get_path('module', 'highslide');
-  $options = variable_get('highslide_options', highslide_default_options());
+  if ($js_path = _highslide_js_path()) {
+    // Add the css and js
+    $path = drupal_get_path('module', 'highslide');
+    $options = variable_get('highslide_options', highslide_default_options());
 
-  drupal_add_css($path .'/highslide/highslide.css');
-  drupal_add_js($path .'/highslide/highslide-full-4.0.8-min.js');
-  drupal_add_js($path .'/highslide.js');
-  drupal_add_js(array('highslide' => array('options' => $options)), 'setting');
+    drupal_add_css($path .'/highslide/highslide.css');
+    // Add Highslide JS.
+    drupal_add_js($js_path);
+    // Add highslide.module's js.
+    drupal_add_js($path .'/highslide.js');
+    // Add the settings/options.
+    drupal_add_js(array('highslide' => array('options' => $options)), 'setting');
+  }
 }
 
 /**
@@ -372,7 +428,7 @@ function theme_highslide_inline($thumb, $content, $alt = '', $title = '', $attri
 }
 
 /**
- * 
+ * Theme function to wrap inline content.
  */
 function theme_highslide_inline_wrap($content = '', $id) {
   if (!empty($content)) {
@@ -437,7 +493,7 @@ function _highslide_count_image_id($matches) {
 }
 
 /**
- *
+ * Helper function to assemble the caption content.
  */
 function _highslide_caption_content($node, $field) {
   switch ($field) {
