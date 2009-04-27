@@ -78,7 +78,7 @@ function _highslide_js_path() {
  * Implementation of hook_perm().
  */
 function highslide_perm() {
-  return array('administer highslide', 'view highslides');
+  return array('administer highslide');
 }
 
 /**
@@ -101,14 +101,17 @@ function highslide_menu() {
     'weight' => -10,
   );
 
-  $items['user/login/highslide'] = array(
+  $items['highslide-ajax/user/login'] = array(
     'title' => 'Login',
-    'page callback' => 'highslide_login',
+    'page callback' => 'highslide_ajax',
     'access callback' => 'user_is_anonymous',
-    'options' => array(
-      'attributes' => array('class' => 'highslide-ajax-link'), 
-      'fragment' => 'highslide-user-login-form',
-    ),
+    'options' => array('attributes' => array('class' => 'highslide-ajax-link')),
+  );
+
+  $items['highslide-ajax'] = array(
+    'page callback' => 'highslide_ajax',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
   );
 
   if (module_exists('imagefield') && module_exists('imagecache')) {
@@ -157,26 +160,23 @@ function highslide_menu() {
   return $items;
 }
 
-
 /**
- * Menu callback for highslide login ajax.
+ * Menu callback that prints another menu callback to screen.
  */
-function highslide_login() {
-  if (user_access('view highslides')) {
-    return '<div id="highslide-user-login-form">'. drupal_get_form('_highslide_login_form') .'</div>';
-  }
-  else {
-    drupal_goto('user/login');
-  }
+function highslide_ajax() {
+  // Get the path, minus the highslide-ajax/
+  $q = substr($_GET['q'], 15);
+  menu_set_active_item($q);
+  print menu_execute_active_handler();
 }
 
 /**
- *
+ * Theme function to print a highslide ajax link.
  */
-function _highslide_login_form() {
-  $form = user_login_block();
-  $form['#action'] = url($_GET['q'], array('query' => array('destination' => variable_get('highslide_login_dest', 'user'))));
-  return $form;
+function theme_highslide_ajax($text, $path, $options = array()) {
+  $class = $attributes['attributes']['class'] ? ' highslide-ajax-link' : 'highslide-ajax-link';
+  $options['attributes']['class'] .= $class;
+  return l($text, 'highslide-ajax/'. $path, $options);
 }
 
 /**
@@ -201,6 +201,13 @@ function highslide_theme() {
         'title' => NULL,
         'caption' => array(),
         'attributes' => array(),
+      ),
+    ),
+    'highslide_ajax' => array(
+      'arguments' => array(
+        'text' => NULL,
+        'path' => NULL,
+        'options' => NULL,
       ),
     ),
     'highslide_inline' => array(
@@ -237,20 +244,14 @@ function highslide_theme() {
  * Implementation of hook_init()
  */
 function highslide_init() {
-  if (user_access('view highslides')) {
-    highslide_add_files();
-  }
+  highslide_add_files();
 }
 
 /**
  * Implementation of hook_footer().
  */
 function highslide_footer($main = 0) {
-  $content = '';
-  if(user_access('view highslides')) {
-    $content = '<div id="closebutton" class="highslide-overlay closebutton" onclick="return hs.close(this)" title="Close"></div>';
-  }
-  return $content;
+  return '<div id="closebutton" class="highslide-overlay closebutton" onclick="return hs.close(this)" title="Close"></div>';
 }
 
 /**
