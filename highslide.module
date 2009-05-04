@@ -166,8 +166,22 @@ function highslide_menu() {
 function highslide_ajax() {
   // Get the path, minus the highslide-ajax/
   $q = substr($_GET['q'], 15);
+
+  // Set the active item to the path $q.
   menu_set_active_item($q);
-  print menu_execute_active_handler();
+
+  // Add the css to the output.
+  drupal_add_css();
+  $output = drupal_get_css();
+
+  // Add the js to the output.
+  drupal_add_js();
+  $output .= drupal_get_js();
+
+  // Finally, add the content.
+  $output .= menu_execute_active_handler();
+
+  print $output;
 }
 
 /**
